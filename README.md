@@ -65,7 +65,7 @@ ytb-downloader/
 │   ├── static/              # File tĩnh (CSS, JS)
 │   ├── templates/           # Template HTML
 │   ├── forms.py             # Form xử lý nhập liệu
-│   ├── urls.py              # Cấu hình URL 
+│   ├── urls.py              # Cấu hình URL
 │   └── views.py             # Logic xử lý request
 ├── ytb_downloader/          # Cấu hình Django project
 ├── requirements.txt         # Danh sách thư viện cần thiết
