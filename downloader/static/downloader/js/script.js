@@ -416,10 +416,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Force hide loading immediately for complete status
                             if (data.status === 'complete') {
                                 loadingElement.classList.add('hidden');
-                                previewContainer.classList.remove('hidden');
+                                previewContainer.classList.add('hidden');  // Hide preview container
                                 previewButton.disabled = false;
                                 downloadButton.disabled = false;
                                 clearAllIntervals();
+                                resetForm();  // Reset form to initial state
                             } else {
                                 // For other statuses, use a timeout
                                 setTimeout(() => {
@@ -489,5 +490,34 @@ document.addEventListener('DOMContentLoaded', function() {
             clearInterval(progressInterval);
             progressInterval = null;
         }
+    }
+    
+    // Function to reset form to initial state
+    function resetForm() {
+        // Clear URL input
+        youtubeUrl.value = '';
+        
+        // Reset error message
+        if (urlError) {
+            urlError.textContent = '';
+        }
+        
+        // Reset download button state
+        downloadButton.disabled = true;
+        
+        // Clear video preview information
+        if (videoTitle) videoTitle.textContent = '';
+        if (videoThumbnail) videoThumbnail.src = '';
+        if (videoDuration) videoDuration.textContent = '';
+        if (videoLength) videoLength.textContent = '';
+        if (downloadInfo) downloadInfo.textContent = '';
+        
+        // Reset progress bar
+        if (progressBar) progressBar.style.width = '0%';
+        if (progressPercent) progressPercent.textContent = '0%';
+        if (loadingText) loadingText.textContent = 'Đang xử lý...';
+        
+        // Reset download ID
+        downloadId = null;
     }
 });
