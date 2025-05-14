@@ -7,6 +7,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'downloader/css/styles.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -50,8 +51,8 @@
                     </div>
 
                     <div class="action-buttons">
-                        <button type="button" id="preview-button" class="button">Xem trước</button>
-                        <button type="submit" id="download-button" class="button primary" disabled>Tải xuống</button>
+                        <button type="button" id="preview-button" class="button"><i class="fas fa-eye"></i> Xem trước</button>
+                        <button type="submit" id="download-button" class="button primary" disabled><i class="fas fa-download"></i> Tải xuống</button>
                     </div>
                 </form>
 
@@ -59,10 +60,18 @@
                     <div class="preview-content">
                         <div class="thumbnail-container">
                             <img id="video-thumbnail" alt="Thumbnail">
+                            <div class="duration-badge" id="video-duration"></div>
                         </div>
                         <div class="video-info">
                             <h3 id="video-title"></h3>
-                            <p id="download-info"></p>
+                            <div class="info-row">
+                                <i class="fas fa-film"></i>
+                                <p id="download-info"></p>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-clock"></i>
+                                <p id="video-length"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -75,7 +84,11 @@
 
                 <div id="loading" class="hidden">
                     <div class="spinner"></div>
-                    <p>Đang xử lý...</p>
+                    <p id="loading-text">Đang xử lý...</p>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <p class="progress-percent" id="progress-percent">0%</p>
                 </div>
             </div>
         </main>
