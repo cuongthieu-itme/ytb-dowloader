@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    restart: always
+    volumes:
+      - ./media:/app/media
+      - ./static:/app/static
+      - ./db.sqlite3:/app/db.sqlite3
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=False
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+      - SECRET_KEY=${SECRET_KEY:-django-insecure-41=wzcr%k0d5j)^7+72@0)1()%k$!+5bsw)9q=81+cv8ineqem}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

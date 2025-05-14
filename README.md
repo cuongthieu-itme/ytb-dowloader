@@ -12,11 +12,18 @@
 
 ## Yêu cầu hệ thống
 
+### Sử dụng trực tiếp
 - Python 3.10 hoặc cao hơn
 - Django 4.2 hoặc cao hơn
 - yt-dlp (phiên bản mới nhất)
 
-## Cài đặt môi trường
+### Sử dụng Docker
+- Docker
+- Docker Compose
+
+## Cài đặt và chạy ứng dụng
+
+### Phương pháp 1: Sử dụng môi trường Python
 
 1. Tạo và kích hoạt môi trường ảo Python:
 
@@ -31,13 +38,35 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Chạy server
+3. Chạy server:
 
 ```bash
 python manage.py runserver
 ```
 
 Sau khi chạy lệnh trên, mở trình duyệt và truy cập địa chỉ: http://127.0.0.1:8000/
+
+### Phương pháp 2: Sử dụng Docker
+
+1. Xây dựng và khởi chạy container:
+
+```bash
+docker-compose up -d --build
+```
+
+2. Truy cập ứng dụng tại địa chỉ: http://localhost:8000/
+
+3. Xem logs của ứng dụng:
+
+```bash
+docker-compose logs -f
+```
+
+4. Dừng và xóa container:
+
+```bash
+docker-compose down
+```
 
 ## Cách sử dụng
 
@@ -68,6 +97,25 @@ ytb-downloader/
 │   ├── urls.py              # Cấu hình URL
 │   └── views.py             # Logic xử lý request
 ├── ytb_downloader/          # Cấu hình Django project
+├── Dockerfile               # Cấu hình Docker
+├── docker-compose.yml       # Cấu hình Docker Compose
+├── docker-entrypoint.sh     # Script khởi động Docker
+├── .dockerignore            # Danh sách file bỏ qua khi build Docker
 ├── requirements.txt         # Danh sách thư viện cần thiết
 └── README.md                # Tài liệu hướng dẫn
 ```
+
+## Cấu hình Docker
+
+Dự án này sử dụng Docker để dễ dàng triển khai và chạy ứng dụng mà không cần cài đặt các phụ thuộc trực tiếp trên máy chủ.
+
+### Các file Docker
+
+- **Dockerfile**: Định nghĩa cách xây dựng image Docker cho ứng dụng
+- **docker-compose.yml**: Cấu hình dịch vụ, mạng và volume cho ứng dụng
+- **docker-entrypoint.sh**: Script chạy khi container khởi động
+- **.dockerignore**: Danh sách các file và thư mục bỏ qua khi build image
+
+### Môi trường
+
+Bạn có thể cấu hình các biến môi trường trong file `.env` (tạo từ `.env.example`) để thay đổi cấu hình ứng dụng khi chạy với Docker.
