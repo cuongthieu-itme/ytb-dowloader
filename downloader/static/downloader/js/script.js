@@ -25,11 +25,25 @@ document.addEventListener('DOMContentLoaded', function() {
         loadingElement.classList.add('hidden');
     }
     
-    // Regular expression for YouTube URL validation
-    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(.*)$/;
+    // Regular expression for YouTube URL validation - improved pattern
+    const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[\?&].*)?$/;
     
     // Event listener for URL input to validate
     youtubeUrl.addEventListener('input', validateUrl);
+    
+    // Add blur event to show more prominent error after user finishes typing
+    youtubeUrl.addEventListener('blur', function() {
+        if (youtubeUrl.value.trim() !== '') {
+            const isValid = validateUrl(true);
+            if (!isValid) {
+                // Add shake animation to the field for invalid URLs
+                youtubeUrl.classList.add('shake-error');
+                setTimeout(() => {
+                    youtubeUrl.classList.remove('shake-error');
+                }, 500);
+            }
+        }
+    });
     
     // Event listener for preview button
     previewButton.addEventListener('click', previewVideo);
@@ -43,21 +57,45 @@ document.addEventListener('DOMContentLoaded', function() {
     updateQualityOptions();
     
     // URL Validation function
-    function validateUrl() {
+    function validateUrl(showDetailedError = false) {
         const url = youtubeUrl.value.trim();
         const isValid = youtubeRegex.test(url);
+        
+        // Remove any previous validation classes
+        youtubeUrl.classList.remove('valid-input', 'invalid-input');
         
         if (url === '') {
             urlError.textContent = '';
             previewButton.disabled = true;
             return false;
         } else if (!isValid) {
-            urlError.textContent = 'URL không hợp lệ. Vui lòng nhập URL YouTube hợp lệ.';
+            // Add more detailed error messages
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                urlError.textContent = 'URL YouTube không hợp lệ. Hãy kiểm tra định dạng URL.';
+            } else if (url.startsWith('http')) {
+                urlError.textContent = 'Đây không phải là URL YouTube. Chỉ hỗ trợ các URL từ youtube.com hoặc youtu.be.';
+            } else {
+                urlError.textContent = 'URL không hợp lệ. Vui lòng nhập URL YouTube hợp lệ (ví dụ: https://www.youtube.com/watch?v=XXXXXXXXXXX).';
+            }
+            
+            youtubeUrl.classList.add('invalid-input');
             previewButton.disabled = true;
             return false;
         } else {
+            // Valid URL
             urlError.textContent = '';
+            youtubeUrl.classList.add('valid-input');
             previewButton.disabled = false;
+            
+            // Show a check mark or success message for valid URLs
+            if (showDetailedError) {
+                const videoId = getVideoId(url);
+                if (videoId) {
+                    // Optional: add a small thumbnail preview on valid URL
+                    urlError.innerHTML = '<span class="success-text"><i class="fas fa-check-circle"></i> URL YouTube hợp lệ</span>';
+                }
+            }
+            
             return true;
         }
     }
@@ -92,15 +130,22 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to get video ID from YouTube URL
     function getVideoId(url) {
+        // Use the same regex pattern that matches our validation
         const match = url.match(youtubeRegex);
-        return match ? match[4] : null;
+        return match ? match[1] : null;
     }
     
     // Function to preview video
     function previewVideo(e) {
         e.preventDefault();
         
-        if (!validateUrl()) {
+        // Do a full validation with detailed errors
+        if (!validateUrl(true)) {
+            // Add shake animation to invalid field
+            youtubeUrl.classList.add('shake-error');
+            setTimeout(() => {
+                youtubeUrl.classList.remove('shake-error');
+            }, 500);
             return;
         }
         
@@ -206,7 +251,20 @@ document.addEventListener('DOMContentLoaded', function() {
         // Prevent the default form submission - important to stop page reloading
         event.preventDefault();
         
-        if (!validateUrl()) {
+        // Do full validation with detailed errors
+        if (!validateUrl(true)) {
+            // Add shake animation to invalid field
+            youtubeUrl.classList.add('shake-error');
+            setTimeout(() => {
+                youtubeUrl.classList.remove('shake-error');
+            }, 500);
+            return false;
+        }
+        
+        // Validate that a format is selected
+        const formatChoice = document.querySelector('input[name="format_choice"]:checked');
+        if (!formatChoice) {
+            urlError.textContent = 'Vui lòng chọn định dạng tải xuống (MP3 hoặc MP4).';
             return false;
         }
         
