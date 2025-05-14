@@ -469,6 +469,32 @@ def download(request):
             
             # Add Content-Length header
             response['Content-Length'] = file_size
+            
+            # Add a cleanup function to delete all files in media directory after response is sent
+            def cleanup_media_directory(response):
+                try:
+                    # Delete all files and subdirectories in the media directory
+                    for root, dirs, files in os.walk(settings.MEDIA_ROOT, topdown=False):
+                        for file in files:
+                            file_path = os.path.join(root, file)
+                            try:
+                                os.unlink(file_path)
+                            except Exception as e:
+                                print(f"Error deleting file {file_path}: {e}")
+                        for dir in dirs:
+                            dir_path = os.path.join(root, dir)
+                            try:
+                                os.rmdir(dir_path)
+                            except Exception as e:
+                                print(f"Error deleting directory {dir_path}: {e}")
+                    print("Media directory cleaned successfully")
+                except Exception as e:
+                    print(f"Error cleaning media directory: {e}")
+                return response
+            
+            # Register the cleanup function to be called after the response is sent
+            response._resource_closers.append(lambda: cleanup_media_directory(response))
+            
             return response
             
         except Exception as e:
